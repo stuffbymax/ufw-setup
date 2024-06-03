@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Function to install UFW
+install_ufw() {
+    echo "Installing UFW..."
+    sudo pacman -S ufw
+}
+
+# Function to configure UFW
+configure_ufw() {
+    echo "Configuring UFW..."
+    sudo systemctl enable ufw
+    sudo systemctl start ufw
+
+    # Add firewall rules
+    sudo ufw allow ssh
+    sudo ufw allow 80/tcp
+    sudo ufw allow 443/tcp
+    sudo ufw default deny incoming
+    sudo ufw enable
+
+    # Reload UFW to apply changes
+    sudo ufw reload
+}
+
+# Function to integrate with NetworkManager
+networkmanager_integration() {
+    echo "Integrating with NetworkManager..."
+    # Create dispatcher script for UFW reload
+    sudo tee /etc/NetworkManager/dispatcher.d/50-ufw-restore <<EOF
+#!/bin/bash
+/usr/sbin/ufw reload
+EOF
+    sudo chmod +x /etc/NetworkManager/dispatcher.d/50-ufw-restore
+}
+
+# Main function
+main() {
+    install_ufw
+    configure_ufw
+    networkmanager_integration
+
+    echo "Firewall configuration completed successfully!"
+}
+
+# Execute main function
+main
