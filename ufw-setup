@@ -3,7 +3,7 @@
 # Function to install UFW
 install_ufw() {
     echo "Installing UFW..."
-    sudo pacman -S ufw
+    sudo pacman -S ufw gufw
 }
 
 # Function to configure UFW
